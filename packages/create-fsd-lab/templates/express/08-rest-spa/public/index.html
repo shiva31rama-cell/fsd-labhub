@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Task Manager SPA</title></head>
+<body>
+  <h1>Task Manager</h1>
+  <form id="task-form"><input id="task-name" placeholder="Enter a task" required><button>Add task</button></form>
+  <ul id="tasks"></ul>
+  <p id="status" role="status"></p>
+  <script>
+    const list = document.querySelector("#tasks");
+    const status = document.querySelector("#status");
+    async function loadTasks() {
+      const response = await fetch("/api/tasks");
+      const tasks = await response.json();
+      list.replaceChildren();
+      for (const task of tasks) {
+        const li = document.createElement("li");
+        const text = document.createTextNode(task.name + " ");
+        const button = document.createElement("button");
+        button.textContent = "Delete";
+        button.addEventListener("click", () => deleteTask(task.id));
+        li.append(text, button);
+        list.append(li);
+      }
+    }
+    async function deleteTask(id) {
+      const response = await fetch("/api/tasks/" + id, { method: "DELETE" });
+      status.textContent = response.ok ? "Task deleted." : "Unable to delete task.";
+      await loadTasks();
+    }
+    document.querySelector("#task-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const input = document.querySelector("#task-name");
+      const response = await fetch("/api/tasks", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: input.value })
+      });
+      if (!response.ok) { status.textContent = "Please enter a valid task."; return; }
+      input.value = "";
+      status.textContent = "Task added.";
+      await loadTasks();
+    });
+    loadTasks().catch(() => { status.textContent = "Could not load tasks."; });
+  </script>
+</body>
+</html>
