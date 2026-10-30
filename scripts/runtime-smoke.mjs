@@ -167,10 +167,19 @@ async function testInteractiveInstaller() {
     }, 60000);
     child.once("error", (error) => { clearTimeout(timer); reject(error); });
     child.once("exit", (exitCode) => { clearTimeout(timer); resolve(exitCode); });
-    child.stdin.end(`4\n19\n${folder}\nn\n`);
+    const answers = ["4", "19", folder, "n"];
+    for (const answer of answers) {
+      child.stdin.write(answer + "\\n");
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+    child.stdin.end();
   });
   if (code !== 0) throw new Error(`Installer exited with code ${code}. ${output}`);
-  const generated = await fs.readdir(path.join(work, folder), { withFileTypes: true });
+  const destination = path.join(work, folder);
+  if (!(await fs.stat(destination).catch(() => null))) {
+    throw new Error(`Installer did not create destination folder. Output: ${output}`);
+  }
+  const generated = await fs.readdir(destination, { withFileTypes: true });
   const directories = generated.filter((entry) => entry.isDirectory());
   if (directories.length !== 18) {
     throw new Error(`Expected 18 generated experiment folders, found ${directories.length}. ${output}`);
