@@ -160,20 +160,21 @@ async function testInteractiveInstaller() {
   const child = spawn(process.execPath, [bin], { cwd: work, stdio: ["pipe", "pipe", "pipe"] });
   child.stdout.on("data", (part) => { output += part.toString(); });
   child.stderr.on("data", (part) => { output += part.toString(); });
-  const code = await new Promise((resolve, reject) => {
+  const exitPromise = new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       child.kill("SIGTERM");
       reject(new Error("Interactive installer timed out. " + output));
     }, 60000);
     child.once("error", (error) => { clearTimeout(timer); reject(error); });
     child.once("exit", (exitCode) => { clearTimeout(timer); resolve(exitCode); });
-    const answers = ["4", "19", folder, "n"];
-    for (const answer of answers) {
-      child.stdin.write(answer + "\\n");
-      await new Promise((resolve) => setTimeout(resolve, 150));
-    }
-    child.stdin.end();
   });
+  const answers = ["4", "19", folder, "n"];
+  for (const answer of answers) {
+    child.stdin.write(answer + "\\n");
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  }
+  child.stdin.end();
+  const code = await exitPromise;
   if (code !== 0) throw new Error(`Installer exited with code ${code}. ${output}`);
   const destination = path.join(work, folder);
   if (!(await fs.stat(destination).catch(() => null))) {
