@@ -33,5 +33,8 @@
     "type": "git",
     "url": "https://github.com/shiva31rama-cell/fsd-labhub.git"
   },
-  "homepage": "https://github.com/shiva31rama-cell/fsd-labhub#readme"
+  "homepage": "https://github.com/shiva31rama-cell/fsd-labhub#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }

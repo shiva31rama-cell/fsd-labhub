@@ -90,9 +90,23 @@ GitHub Actions validates Express HTTP behavior, builds the seven React projects,
 - MongoDB cleanup examples use dedicated practice database names. Read warnings before running destructive cleanup commands.
 - Never commit passwords, MongoDB connection strings, API keys or other secrets.
 
+## Public npm release
+
+The package is configured for public publishing. After confirming that the unscoped name is available and signing in to npm:
+
+```bash
+cd packages/create-fsd-lab
+npm login
+npm whoami
+npm view create-fsd-lab version
+npm publish --access public
+```
+
+If `npm view` returns a version, the name is already registered; do not publish under that name. Choose a different package name first. Publishing is a separate maintainer action and is not performed by the GitHub Actions tests.
+
 ## Project status
 
-Automated runtime validation is being completed before public npm publication. Publishing will happen only after the installer and package contents pass final checks.
+All 18 templates, CLI bulk scaffolding, Express runtime tests, React production builds, Mongoose CRUD tests, and the three mongosh query files passed the latest GitHub Actions validation. The package is prepared for the first public npm release; it has not been published yet.
 
 ## License
 
