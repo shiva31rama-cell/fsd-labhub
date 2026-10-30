@@ -2,17 +2,16 @@
   "name": "fsd-labhub-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "Open-source FSD laboratory experiments, templates, CLI and website",
+  "description": "Open-source FSD lab templates and CLI installer",
   "workspaces": [
-    "packages/create-fsd-lab",
-    "website"
+    "packages/create-fsd-lab"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace website",
-    "build": "npm run build --workspace website",
-    "test": "npm run test --workspace packages/create-fsd-lab"
+    "test": "npm test --workspace packages/create-fsd-lab",
+    "test:cli": "node --test packages/create-fsd-lab/test/*.test.js",
+    "pack:cli": "npm pack --workspace packages/create-fsd-lab --dry-run"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=20.19.0"
   }
 }

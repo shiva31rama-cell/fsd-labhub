@@ -1,24 +1,30 @@
 # create-fsd-lab
 
-Interactive scaffolder for the 18 FSD LabHub experiments.
+Interactive command-line scaffolder for the 18 FSD LabHub experiments.
 
-## Planned public command
-
-After the package is published publicly on npm:
+## Public installation (after npm publication)
 
 ```bash
 npx create-fsd-lab
 ```
 
-The installer lets a student choose ExpressJS, ReactJS, MongoDB or all experiments. It copies the selected template into a new folder and installs that project's npm dependencies.
+Choose ExpressJS, ReactJS, MongoDB or all experiment templates. The installer copies the selected source template and offers to install the required npm dependencies.
 
-## Local development
-
-From the repository root:
+## Run from the GitHub repository
 
 ```bash
 npm install
 node packages/create-fsd-lab/bin/create-fsd-lab.js
 ```
 
-MongoDB shell exercises are query files, not Node applications. They require `mongosh` or a compatible MongoDB interface and a running MongoDB deployment.
+## Generated projects
+
+- ExpressJS templates generate a Node project with `npm start`.
+- ReactJS templates generate a Vite project with `npm run dev`.
+- MongoDB templates contain `queries.mongodb.js` files for mongosh / MongoDB Compass. They do not require npm packages.
+
+## Requirements
+
+Node.js 20.19 or newer for the current Vite toolchain. MongoDB exercises additionally require a MongoDB server or Atlas connection and mongosh.
+
+These templates are educational exercises, not production-ready application starters.

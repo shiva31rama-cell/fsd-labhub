@@ -1,63 +1,88 @@
 # FSD LabHub
 
-**Free, open-source starter projects for 18 Full Stack Development (FSD) laboratory experiments.**
+**Free, open-source starter projects for all 18 Full Stack Development laboratory experiments in the supplied syllabus.**
 
-FSD LabHub will provide:
-- A public website to browse experiments, read instructions, and copy installation commands.
-- A public npm CLI package that scaffolds selected experiment projects.
-- Downloadable source templates and beginner-friendly run instructions.
+This repository contains source templates and an interactive command-line installer. A separate website is not required.
 
-## Syllabus coverage
+## Install from npm
 
-### ExpressJS
-1. Routes, route parameters, query parameters, and URL building
-2. HTTP methods: accept, retrieve, and delete resources
-3. EJS templating
-4. HTML form data
-5. Cookies and sessions
-6. Session-based user authentication (educational demo)
-7. MongoDB with Mongoose CRUD
-8. Single-page task interface backed by RESTful APIs
-
-### ReactJS
-9. Rendering a component to a web page
-10. JSX markup
-11. Props and state
-12. CSS and Sass styling with displayed data
-13. Event handling
-14. Conditional rendering
-15. List rendering
-
-### MongoDB Shell
-16. Document CRUD operations
-17. Create and drop databases and collections
-18. find, limit, sort, createIndex, and aggregate
-
-## Free installation model
-
-All student-facing packages are intended to be **public**. Public npm packages can be published and installed on npm's free plan. Private npm packages are not required for this project.
-
-The planned installer command is:
+After the package is published publicly:
 
 ```bash
 npx create-fsd-lab
 ```
 
-The CLI will offer category and experiment selection, copy the chosen template, install its project dependencies, and print run instructions.
+The installer lets students choose ExpressJS, ReactJS, MongoDB, or all 18 experiments. It copies the selected experiment into a local folder and can install its npm dependencies.
+
+> The package has not been published yet. Until then, clone this repository and run the CLI locally using the development instructions below.
+
+## Syllabus coverage
+
+### ExpressJS (8 experiments)
+1. Routes, route parameters, query parameters and URL building
+2. Accept, retrieve and delete resources using HTTP methods
+3. Templating engine using EJS
+4. Form data handling
+5. Cookie and session management
+6. Session-based user authentication
+7. MongoDB connection with Mongoose and CRUD operations
+8. Single-page application using RESTful APIs
+
+### ReactJS (7 experiments)
+9. Render a React component to a web page
+10. Write markup using JSX
+11. Props and state
+12. CSS and Sass styling with displayed data
+13. Respond to events
+14. Conditional rendering
+15. Rendering lists
+
+### MongoDB Shell (3 experiments)
+16. Document CRUD operations
+17. Create and drop databases and collections
+18. find, limit, sort, createIndex and aggregate
 
 ## Requirements
 
-- Node.js and npm for Express/React templates and the CLI.
-- MongoDB Community Server or a MongoDB Atlas connection for database-backed experiments.
-- `mongosh` for MongoDB shell exercises.
+- Node.js 20.19 or newer and npm.
+- MongoDB Community Server or MongoDB Atlas for database-backed Express/MongoDB exercises.
+- `mongosh` or MongoDB Compass for MongoDB shell exercises.
+
+Node.js is installed once per computer. The installer creates separate experiment folders with their own dependencies.
+
+## Run the CLI from this repository
+
+```bash
+git clone https://github.com/shiva31rama-cell/fsd-labhub.git
+cd fsd-labhub
+npm install
+node packages/create-fsd-lab/bin/create-fsd-lab.js
+```
+
+## Test and inspect package contents
+
+```bash
+npm test
+npm pack --workspace packages/create-fsd-lab --dry-run
+```
+
+## Run an installed experiment
+
+- ExpressJS: `cd <experiment-folder>` then `npm start`.
+- ReactJS: `cd <experiment-folder>` then `npm run dev`.
+- MongoDB: open `queries.mongodb.js` in mongosh or MongoDB Compass and run the commands.
+
+## Important notes
+
+- MongoDB shell exercises are query files, not Node.js applications. npm cannot install or start a MongoDB server.
+- Some syllabus method names (`insert()`, `update()`, `remove()`) are legacy. The examples include current mongosh equivalents.
+- Authentication and in-memory session examples are educational demonstrations, not production-ready systems.
+- MongoDB cleanup examples use dedicated practice database names. Read warnings before running destructive cleanup commands.
+- Never commit passwords, MongoDB connection strings, API keys or other secrets.
 
 ## Project status
 
-Initial repository setup. The next implementation steps are to add and test all 18 templates, implement the CLI, publish the CLI publicly on npm, and build the catalogue website.
-
-## Safety and learning notes
-
-These are educational lab examples, not production-ready application templates. Authentication/session examples must use demo-only credentials and clear security warnings. Never commit real passwords, database connection strings, API keys, or personal data.
+All templates and CLI behavior are being checked before public npm publication. Publishing will happen only after the test and package-content checks pass.
 
 ## License
 
