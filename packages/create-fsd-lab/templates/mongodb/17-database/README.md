@@ -1,7 +1,12 @@
 # MongoDB database and collection commands
 
-This experiment demonstrates selecting a database, creating a collection, listing databases/collections and cleanup syntax.
+This experiment demonstrates selecting/creating a database, creating a collection, listing databases/collections, and the syntax for dropping a collection or database.
 
-Connect to a local MongoDB server with mongosh and run the query file statement by statement.
+## Run
+Connect to a local MongoDB server or Atlas, then execute:
 
-**Destructive cleanup:** The final two commented lines show the syllabus-required collection/database drop commands. Uncomment and run them only in the dedicated `fsd_lab_database_practice` database after confirming that you do not need its data.
+```bash
+mongosh --file queries.mongodb.js
+```
+
+The cleanup examples are commented out. To practise them after inspecting the result, uncomment the relevant line and rerun it only against the dedicated `fsd_lab_database_practice` database. Dropping a collection or database permanently removes its data.

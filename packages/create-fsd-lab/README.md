@@ -10,6 +10,16 @@ npx create-fsd-lab
 
 Choose ExpressJS, ReactJS, MongoDB or all experiment templates. The installer copies the selected source template and offers to install the required npm dependencies.
 
+## Non-interactive options
+
+```bash
+npx create-fsd-lab --all --dir fsd-labs
+npx create-fsd-lab --category ExpressJS --dir express-labs
+npx create-fsd-lab --experiment 01a --dir routing-lab
+```
+
+Add `--no-install` to scaffold projects without running npm install. Use `npx create-fsd-lab --help` to see these options.
+
 ## Run from the GitHub repository
 
 ```bash

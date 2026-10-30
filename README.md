@@ -57,21 +57,24 @@ npm install
 node packages/create-fsd-lab/bin/create-fsd-lab.js
 ```
 
-## Tests
+## Installer options
 
-Basic structure and scaffolding tests:
+```bash
+node packages/create-fsd-lab/bin/create-fsd-lab.js --all --dir fsd-labs
+node packages/create-fsd-lab/bin/create-fsd-lab.js --category ExpressJS --dir express-labs
+node packages/create-fsd-lab/bin/create-fsd-lab.js --experiment 01a --dir routing-lab
+```
+
+Add `--no-install` to create the folders without installing npm dependencies. Run with no arguments for the interactive menu.
+
+## Tests
 
 ```bash
 npm test
-```
-
-Runtime smoke checks (install each Express/React project, run HTTP checks for Express, and build each React app):
-
-```bash
 node scripts/runtime-smoke.mjs
 ```
 
-GitHub Actions runs both basic checks and runtime validation. The Mongoose CRUD API is exercised against a MongoDB service in CI. The three MongoDB shell query files are also executed by mongosh against that temporary service, including cleanup of the dedicated test databases. The interactive user experience is tested by running the CLI menu to scaffold all 18 experiments.
+GitHub Actions validates Express HTTP behavior, builds the seven React projects, checks creation of all 18 projects through the CLI bulk-install mode, and executes the MongoDB query files with mongosh against a temporary MongoDB service.
 
 ## Run an installed experiment
 
@@ -82,14 +85,14 @@ GitHub Actions runs both basic checks and runtime validation. The Mongoose CRUD 
 ## Important notes
 
 - MongoDB shell exercises are query files, not Node.js applications. npm cannot install or start a MongoDB server.
-- Some syllabus method names (`insert()`, `update()`, `remove()`) are legacy. The examples include modern mongosh equivalents.
+- Some syllabus method names (`insert()`, `update()`, `remove()`) are legacy. The examples include current mongosh equivalents.
 - Authentication and in-memory session examples are educational demonstrations, not production-ready systems.
 - MongoDB cleanup examples use dedicated practice database names. Read warnings before running destructive cleanup commands.
 - Never commit passwords, MongoDB connection strings, API keys or other secrets.
 
 ## Project status
 
-Runtime validation is being carried out before public npm publication. Publishing will happen only after the installer and package contents have passed final checks.
+Automated runtime validation is being completed before public npm publication. Publishing will happen only after the installer and package contents pass final checks.
 
 ## License
 

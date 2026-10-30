@@ -2,4 +2,10 @@
 
 Covers `find()`, `limit()`, `sort()`, `createIndex()` and `aggregate()`.
 
-Connect to MongoDB with mongosh, then run `queries.mongodb.js` statement by statement. The examples use the isolated `fsd_lab_practice` database. Before rerunning, clear or change the sample rows to avoid duplicate-key errors from the unique email index.
+Connect to MongoDB with mongosh and run:
+
+```bash
+mongosh --file queries.mongodb.js
+```
+
+The examples use the isolated `fsd_lab_practice` database. The script inserts sample data and creates a unique index on the email field. To rerun it, first use a fresh practice database or remove the existing sample rows.
