@@ -1,0 +1,11 @@
+$primary-color: #2457c5;
+.container {
+  text-align: center;
+  margin: 30px;
+  h1 { color: $primary-color; }
+  .student {
+    background: #e9eef8;
+    padding: 10px;
+    border-radius: 6px;
+  }
+}
