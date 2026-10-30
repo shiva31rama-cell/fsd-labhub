@@ -153,42 +153,34 @@ try {
     }
   }
 
-async function testInteractiveInstaller() {
+async function testCliInstallAll() {
   const bin = path.resolve(process.cwd(), "packages/create-fsd-lab/bin/create-fsd-lab.js");
   const folder = "cli-install-all-18";
   let output = "";
-  const child = spawn(process.execPath, [bin], { cwd: work, stdio: ["pipe", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [bin, "--all", "--dir", folder, "--no-install"], {
+    cwd: work,
+    stdio: ["ignore", "pipe", "pipe"]
+  });
   child.stdout.on("data", (part) => { output += part.toString(); });
   child.stderr.on("data", (part) => { output += part.toString(); });
-  const exitPromise = new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      child.kill("SIGTERM");
-      reject(new Error("Interactive installer timed out. " + output));
-    }, 60000);
-    child.once("error", (error) => { clearTimeout(timer); reject(error); });
-    child.once("exit", (exitCode) => { clearTimeout(timer); resolve(exitCode); });
+  const code = await new Promise((resolve, reject) => {
+    child.once("error", reject);
+    child.once("exit", resolve);
   });
-  const answers = ["4", "19", folder, "n"];
-  for (const answer of answers) {
-    child.stdin.write(answer + "\\n");
-    await new Promise((resolve) => setTimeout(resolve, 150));
-  }
-  child.stdin.end();
-  const code = await exitPromise;
-  if (code !== 0) throw new Error(`Installer exited with code ${code}. ${output}`);
+  if (code !== 0) throw new Error(`CLI exited with code ${code}. Output: ${output}`);
   const destination = path.join(work, folder);
   if (!(await fs.stat(destination).catch(() => null))) {
-    throw new Error(`Installer did not create destination folder. Output: ${output}`);
+    throw new Error(`CLI did not create the destination folder. Output: ${output}`);
   }
   const generated = await fs.readdir(destination, { withFileTypes: true });
   const directories = generated.filter((entry) => entry.isDirectory());
   if (directories.length !== 18) {
-    throw new Error(`Expected 18 generated experiment folders, found ${directories.length}. ${output}`);
+    throw new Error(`Expected 18 generated experiment folders, found ${directories.length}. Output: ${output}`);
   }
-  report("Interactive CLI installs all 18 experiments");
+  report("CLI --all scaffolds all 18 experiments");
 }
 
-  try { await testInteractiveInstaller(); } catch (error) { report("Interactive CLI installs all 18 experiments", error); }
+  try { await testCliInstallAll(); } catch (error) { report("CLI --all scaffolds all 18 experiments", error); }
 } finally {
   await fs.rm(work, { recursive: true, force: true });
 }

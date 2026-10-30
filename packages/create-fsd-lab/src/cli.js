@@ -77,6 +77,58 @@ function showExperiments(items) {
 }
 
 export async function run() {
+  const args = process.argv.slice(2);
+  const readOption = (name, fallback = undefined) => {
+    const index = args.indexOf(name);
+    return index >= 0 ? args[index + 1] : fallback;
+  };
+
+  if (args.includes("--help") || args.includes("-h")) {
+    console.log("FSD LabHub installer");
+    console.log("Interactive: npx create-fsd-lab");
+    console.log("Install all: npx create-fsd-lab --all --dir fsd-labs");
+    console.log("Install category: npx create-fsd-lab --category ExpressJS --dir express-labs");
+    console.log("Install one: npx create-fsd-lab --experiment 01a --dir routing-lab");
+    console.log("Add --no-install to create projects without running npm install.");
+    return;
+  }
+
+  const nonInteractive = args.includes("--all") || args.includes("--category") || args.includes("--experiment");
+  if (nonInteractive) {
+    let selected;
+    if (args.includes("--all")) {
+      selected = catalog;
+    } else if (args.includes("--category")) {
+      const category = readOption("--category");
+      selected = catalog.filter((item) => item.category.toLowerCase() === String(category ?? "").toLowerCase());
+      if (!selected.length) throw new Error("Unknown category. Use ExpressJS, ReactJS or MongoDB.");
+    } else {
+      const experiment = readOption("--experiment");
+      selected = catalog.filter((item) =>
+        item.id.toLowerCase() === String(experiment ?? "").toLowerCase()
+        || item.slug.toLowerCase() === String(experiment ?? "").toLowerCase()
+      );
+      if (!selected.length) throw new Error("Unknown experiment ID or slug. Check the project README.");
+    }
+
+    const folder = safeFolderName(readOption("--dir", "fsd-labs"));
+    const base = path.resolve(process.cwd(), folder);
+    if (await exists(base)) throw new Error(`Destination folder already exists: ${base}`);
+    await fs.mkdir(base, { recursive: true });
+    const install = !args.includes("--no-install");
+
+    for (const item of selected) {
+      const destination = path.resolve(base, item.slug);
+      assertInside(base, destination);
+      console.log(`Creating [${item.id}] ${item.title}...`);
+      const target = await scaffold(item, destination, { install });
+      console.log(`Created: ${path.relative(process.cwd(), target)}`);
+    }
+    console.log(`\\nSuccessfully created ${selected.length} experiment project(s) in ${folder}.`);
+    if (!install) console.log("Dependencies were not installed. Run npm install inside each ExpressJS/ReactJS project.");
+    return;
+  }
+
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
     console.log("\n==========================================");
