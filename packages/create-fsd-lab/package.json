@@ -1,0 +1,29 @@
+{
+  "name": "create-fsd-lab",
+  "version": "0.1.0",
+  "description": "Interactive installer for 18 free Full Stack Development laboratory experiments",
+  "type": "module",
+  "bin": {
+    "create-fsd-lab": "./bin/create-fsd-lab.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "keywords": [
+    "fsd",
+    "lab",
+    "express",
+    "react",
+    "mongodb",
+    "education",
+    "scaffolder"
+  ],
+  "license": "MIT"
+}
