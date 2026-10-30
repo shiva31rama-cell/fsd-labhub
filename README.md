@@ -6,7 +6,7 @@ This repository contains source templates and an interactive command-line instal
 
 ## Install from npm
 
-After the package is published publicly:
+After public npm publication:
 
 ```bash
 npx create-fsd-lab
@@ -14,7 +14,7 @@ npx create-fsd-lab
 
 The installer lets students choose ExpressJS, ReactJS, MongoDB, or all 18 experiments. It copies the selected experiment into a local folder and can install its npm dependencies.
 
-> The package has not been published yet. Until then, clone this repository and run the CLI locally using the development instructions below.
+> The package has not been published yet. Until then, clone this repository and run the CLI locally.
 
 ## Syllabus coverage
 
@@ -48,8 +48,6 @@ The installer lets students choose ExpressJS, ReactJS, MongoDB, or all 18 experi
 - MongoDB Community Server or MongoDB Atlas for database-backed Express/MongoDB exercises.
 - `mongosh` or MongoDB Compass for MongoDB shell exercises.
 
-Node.js is installed once per computer. The installer creates separate experiment folders with their own dependencies.
-
 ## Run the CLI from this repository
 
 ```bash
@@ -59,12 +57,21 @@ npm install
 node packages/create-fsd-lab/bin/create-fsd-lab.js
 ```
 
-## Test and inspect package contents
+## Tests
+
+Basic structure and scaffolding tests:
 
 ```bash
 npm test
-npm pack --workspace packages/create-fsd-lab --dry-run
 ```
+
+Runtime smoke checks (install each Express/React project, run HTTP checks for Express, and build each React app):
+
+```bash
+node scripts/runtime-smoke.mjs
+```
+
+GitHub Actions runs both basic checks and runtime validation. The MongoDB shell files are checked for required query content; Mongoose CRUD is exercised against a MongoDB service in CI. The interactive shell commands are still intended to be practised in mongosh or MongoDB Compass.
 
 ## Run an installed experiment
 
@@ -75,14 +82,14 @@ npm pack --workspace packages/create-fsd-lab --dry-run
 ## Important notes
 
 - MongoDB shell exercises are query files, not Node.js applications. npm cannot install or start a MongoDB server.
-- Some syllabus method names (`insert()`, `update()`, `remove()`) are legacy. The examples include current mongosh equivalents.
+- Some syllabus method names (`insert()`, `update()`, `remove()`) are legacy. The examples include modern mongosh equivalents.
 - Authentication and in-memory session examples are educational demonstrations, not production-ready systems.
 - MongoDB cleanup examples use dedicated practice database names. Read warnings before running destructive cleanup commands.
 - Never commit passwords, MongoDB connection strings, API keys or other secrets.
 
 ## Project status
 
-All templates and CLI behavior are being checked before public npm publication. Publishing will happen only after the test and package-content checks pass.
+Runtime validation is being carried out before public npm publication. Publishing will happen only after the installer and package contents have passed final checks.
 
 ## License
 
