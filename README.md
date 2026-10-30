@@ -71,7 +71,7 @@ Runtime smoke checks (install each Express/React project, run HTTP checks for Ex
 node scripts/runtime-smoke.mjs
 ```
 
-GitHub Actions runs both basic checks and runtime validation. The MongoDB shell files are checked for required query content; Mongoose CRUD is exercised against a MongoDB service in CI. The interactive shell commands are still intended to be practised in mongosh or MongoDB Compass.
+GitHub Actions runs both basic checks and runtime validation. The Mongoose CRUD API is exercised against a MongoDB service in CI. The three MongoDB shell query files are also executed by mongosh against that temporary service, including cleanup of the dedicated test databases. The interactive user experience is tested by running the CLI menu to scaffold all 18 experiments.
 
 ## Run an installed experiment
 

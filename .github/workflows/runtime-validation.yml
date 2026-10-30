@@ -32,3 +32,19 @@ jobs:
         run: npm install
       - name: Build and smoke-test every experiment
         run: node scripts/runtime-smoke.mjs
+      - name: Execute MongoDB shell exercises against the MongoDB service
+        shell: bash
+        run: |
+          set -euo pipefail
+          container_id="$(docker ps --filter ancestor=mongo:7.0 --format '{{.ID}}' | head -n 1)"
+          test -n "$container_id"
+          for query in \
+            packages/create-fsd-lab/templates/mongodb/16-crud/queries.mongodb.js \
+            packages/create-fsd-lab/templates/mongodb/17-database/queries.mongodb.js \
+            packages/create-fsd-lab/templates/mongodb/18-queries/queries.mongodb.js
+          do
+            file_name="$(basename "$query")"
+            docker cp "$query" "$container_id:/tmp/$file_name"
+            docker exec "$container_id" mongosh --quiet --file "/tmp/$file_name"
+          done
+          docker exec "$container_id" mongosh --quiet --eval 'db.getSiblingDB("fsd_lab_crud_practice").dropDatabase(); db.getSiblingDB("fsd_lab_database_practice").dropDatabase(); db.getSiblingDB("fsd_lab_practice").dropDatabase(); db.getSiblingDB("fsd_lab_ci").dropDatabase()'

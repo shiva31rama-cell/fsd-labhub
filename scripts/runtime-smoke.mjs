@@ -152,6 +152,33 @@ try {
       report(`MongoDB ${item.id}`, error);
     }
   }
+
+async function testInteractiveInstaller() {
+  const bin = path.resolve(process.cwd(), "packages/create-fsd-lab/bin/create-fsd-lab.js");
+  const folder = "cli-install-all-18";
+  let output = "";
+  const child = spawn(process.execPath, [bin], { cwd: work, stdio: ["pipe", "pipe", "pipe"] });
+  child.stdout.on("data", (part) => { output += part.toString(); });
+  child.stderr.on("data", (part) => { output += part.toString(); });
+  const code = await new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      child.kill("SIGTERM");
+      reject(new Error("Interactive installer timed out. " + output));
+    }, 60000);
+    child.once("error", (error) => { clearTimeout(timer); reject(error); });
+    child.once("exit", (exitCode) => { clearTimeout(timer); resolve(exitCode); });
+    child.stdin.end(`4\n19\n${folder}\nn\n`);
+  });
+  if (code !== 0) throw new Error(`Installer exited with code ${code}. ${output}`);
+  const generated = await fs.readdir(path.join(work, folder), { withFileTypes: true });
+  const directories = generated.filter((entry) => entry.isDirectory());
+  if (directories.length !== 18) {
+    throw new Error(`Expected 18 generated experiment folders, found ${directories.length}. ${output}`);
+  }
+  report("Interactive CLI installs all 18 experiments");
+}
+
+  try { await testInteractiveInstaller(); } catch (error) { report("Interactive CLI installs all 18 experiments", error); }
 } finally {
   await fs.rm(work, { recursive: true, force: true });
 }
