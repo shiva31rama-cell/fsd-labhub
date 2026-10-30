@@ -4,7 +4,7 @@
   "description": "Interactive installer for 18 free Full Stack Development laboratory experiments",
   "type": "module",
   "bin": {
-    "create-fsd-lab": "./bin/create-fsd-lab.js"
+    "create-fsd-lab": "bin/create-fsd-lab.js"
   },
   "files": [
     "bin",
