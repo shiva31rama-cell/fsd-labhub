@@ -8,7 +8,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -16,9 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Install workspace dependencies
+      - name: Install repository workspace dependencies
         run: npm install
-      - name: Run tests
+      - name: Run unit tests
         run: npm test
+      - name: Smoke-test CLI and dependency installation on this OS
+        run: node packages/create-fsd-lab/bin/create-fsd-lab.js --experiment 01a --dir platform-smoke
+      - name: Verify generated Express dependency resolves
+        working-directory: platform-smoke/express-routing
+        run: node -e "console.log(require.resolve('express'))"
       - name: Inspect npm package contents
         run: npm pack --workspace packages/create-fsd-lab --dry-run
