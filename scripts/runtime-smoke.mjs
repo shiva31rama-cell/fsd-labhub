@@ -177,7 +177,11 @@ async function testCliInstallAll() {
   if (directories.length !== 18) {
     throw new Error(`Expected 18 generated experiment folders, found ${directories.length}. Output: ${output}`);
   }
-  report("CLI --all scaffolds all 18 experiments");
+  const workspace = JSON.parse(await fs.readFile(path.join(destination, "package.json"), "utf8"));
+  if (workspace.name !== "fsd-labhub-generated-labs" || workspace.workspaces.length !== 15) {
+    throw new Error(`Expected one shared workspace containing 15 ExpressJS/ReactJS projects; found ${workspace.workspaces?.length ?? 0}.`);
+  }
+  report("CLI --all scaffolds all 18 experiments and creates one 15-project dependency workspace");
 }
 
   try { await testCliInstallAll(); } catch (error) { report("CLI --all scaffolds all 18 experiments", error); }
