@@ -4,12 +4,12 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { catalog } from "../src/catalog.js";
-import { scaffold } from "../src/cli.js";
+import { buildWorkspaceManifest, scaffold } from "../src/cli.js";
 
 test("creates an Express project manifest and source file", async () => {
   const base = await fs.mkdtemp(path.join(os.tmpdir(), "fsd-express-"));
   const item = catalog.find((entry) => entry.id === "01a");
-  const target = await scaffold(item, path.join(base, item.slug), { install: false });
+  const target = await scaffold(item, path.join(base, item.slug));
   const manifest = JSON.parse(await fs.readFile(path.join(target, "package.json"), "utf8"));
   assert.equal(manifest.scripts.start, "node server.js");
   assert.ok(manifest.dependencies.express);
@@ -19,7 +19,7 @@ test("creates an Express project manifest and source file", async () => {
 test("creates a React project with Vite scripts", async () => {
   const base = await fs.mkdtemp(path.join(os.tmpdir(), "fsd-react-"));
   const item = catalog.find((entry) => entry.id === "07b");
-  const target = await scaffold(item, path.join(base, item.slug), { install: false });
+  const target = await scaffold(item, path.join(base, item.slug));
   const manifest = JSON.parse(await fs.readFile(path.join(target, "package.json"), "utf8"));
   assert.equal(manifest.scripts.dev, "vite");
   assert.ok(manifest.devDependencies.vite);
@@ -29,7 +29,22 @@ test("creates a React project with Vite scripts", async () => {
 test("creates MongoDB query files without a false Node package manifest", async () => {
   const base = await fs.mkdtemp(path.join(os.tmpdir(), "fsd-mongo-"));
   const item = catalog.find((entry) => entry.id === "09a");
-  const target = await scaffold(item, path.join(base, item.slug), { install: false });
+  const target = await scaffold(item, path.join(base, item.slug));
   await fs.access(path.join(target, "queries.mongodb.js"));
   await assert.rejects(fs.access(path.join(target, "package.json")));
+});
+
+test("builds one shared npm workspace for selected Node projects only", () => {
+  const manifest = buildWorkspaceManifest(catalog);
+  assert.equal(manifest.name, "fsd-labhub-generated-labs");
+  assert.equal(manifest.private, true);
+  assert.equal(manifest.workspaces.length, 15);
+  assert.ok(manifest.workspaces.includes("express-routing"));
+  assert.ok(manifest.workspaces.includes("react-rendering"));
+  assert.ok(!manifest.workspaces.some((name) => name.startsWith("mongodb-")));
+});
+
+test("does not create an npm workspace for MongoDB-only experiments", () => {
+  const mongoItems = catalog.filter((item) => item.category === "MongoDB");
+  assert.equal(buildWorkspaceManifest(mongoItems), null);
 });
