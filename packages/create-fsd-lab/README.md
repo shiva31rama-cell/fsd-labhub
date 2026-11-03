@@ -1,40 +1,66 @@
 # create-fsd-lab
 
-Interactive command-line scaffolder for the 18 FSD LabHub experiments.
+Lightweight cross-platform CLI scaffolder for the 18 FSD LabHub experiments.
 
-## Public installation (after npm publication)
+## Install globally
 
-```bash
+~~~bash
+npm install --global create-fsd-lab
+~~~
+
+Then run it from any directory:
+
+~~~bash
+create-fsd-lab
+~~~
+
+One-time use without global installation:
+
+~~~bash
 npx create-fsd-lab
-```
+~~~
 
-Choose ExpressJS, ReactJS, MongoDB or all experiment templates. The installer copies the selected source template and offers to install the required npm dependencies.
+## Faster dependency installation
 
-## Non-interactive options
+The CLI has no runtime npm dependencies. It copies only the selected experiment templates.
 
-```bash
-npx create-fsd-lab --all --dir fsd-labs
-npx create-fsd-lab --category ExpressJS --dir express-labs
-npx create-fsd-lab --experiment 01a --dir routing-lab
-```
+When multiple ExpressJS/ReactJS experiments are selected, the generated folder contains one private npm workspace. The installer runs npm install once at the workspace root, allowing npm to share and deduplicate packages across the selected labs.
 
-Add `--no-install` to scaffold projects without running npm install. Use `npx create-fsd-lab --help` to see these options.
+The install command uses --no-audit --no-fund --prefer-offline to reduce extra registry requests and reuse cached packages where possible.
 
-## Run from the GitHub repository
+Each generated experiment still has its own package.json and start/dev script. Run commands from that experiment's folder.
 
-```bash
-npm install
-node packages/create-fsd-lab/bin/create-fsd-lab.js
-```
+For slow or restricted internet, skip automatic dependency installation:
 
-## Generated projects
+~~~bash
+create-fsd-lab --all --dir fsd-labs --no-install
+cd fsd-labs
+npm install --no-audit --no-fund --prefer-offline
+~~~
 
-- ExpressJS templates generate a Node project with `npm start`.
-- ReactJS templates generate a Vite project with `npm run dev`.
-- MongoDB templates contain `queries.mongodb.js` files for mongosh / MongoDB Compass. They do not require npm packages.
+## Options
+
+~~~bash
+create-fsd-lab --all --dir fsd-labs
+create-fsd-lab --category ExpressJS --dir express-labs
+create-fsd-lab --experiment 01a --dir routing-lab
+create-fsd-lab --help
+~~~
+
+Prefix with npx if the CLI is not installed globally.
+
+## Run generated projects
+
+- ExpressJS: enter the experiment folder and run npm start.
+- ReactJS: enter the experiment folder and run npm run dev.
+- MongoDB: use mongosh --file ./queries.mongodb.js from the experiment folder.
 
 ## Requirements
 
-Node.js 20.19 or newer for the current Vite toolchain. MongoDB exercises additionally require a MongoDB server or Atlas connection and mongosh.
+- Node.js 20.19 or newer and npm.
+- MongoDB Server or Atlas plus mongosh for MongoDB exercises.
+- Internet access for dependencies not already in the npm cache.
+
+The installer is designed for Windows, Linux and macOS. The package itself does not install a MongoDB server or mongosh.
 
 These templates are educational exercises, not production-ready application starters.
