@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { catalog } from "../packages/create-fsd-lab/src/catalog.js";
-import { scaffold } from "../packages/create-fsd-lab/src/cli.js";
+import { buildWorkspaceManifest, scaffold } from "../packages/create-fsd-lab/src/cli.js";
 
 const work = await fs.mkdtemp(path.join(os.tmpdir(), "fsd-runtime-"));
 let failures = 0;
@@ -73,12 +73,20 @@ async function readJson(url, init) {
 }
 
 try {
+  const nodeItems = catalog.filter((entry) => entry.category !== "MongoDB");
+  const runtimeWorkspace = path.join(work, "runtime-workspace");
+  await fs.mkdir(runtimeWorkspace, { recursive: true });
+  for (const item of nodeItems) {
+    await scaffold(item, path.join(runtimeWorkspace, item.slug));
+  }
+  const workspaceManifest = buildWorkspaceManifest(nodeItems);
+  await fs.writeFile(path.join(runtimeWorkspace, "package.json"), JSON.stringify(workspaceManifest, null, 2) + "\n", "utf8");
+  await npm(runtimeWorkspace, ["install", "--no-audit", "--no-fund", "--prefer-offline"]);
+
   for (const item of catalog.filter((entry) => entry.category === "ExpressJS")) {
     let child;
     try {
-      const target = path.join(work, item.slug);
-      await scaffold(item, target, { install: false });
-      await npm(target, ["install", "--no-audit", "--no-fund"]);
+      const target = path.join(runtimeWorkspace, item.slug);
       child = await startServer(target);
       const base = "http://127.0.0.1:3000";
 
@@ -130,9 +138,7 @@ try {
 
   for (const item of catalog.filter((entry) => entry.category === "ReactJS")) {
     try {
-      const target = path.join(work, item.slug);
-      await scaffold(item, target, { install: false });
-      await npm(target, ["install", "--no-audit", "--no-fund"]);
+      const target = path.join(runtimeWorkspace, item.slug);
       await npm(target, ["run", "build"]);
       await fs.access(path.join(target, "dist", "index.html"));
       report(`React ${item.id} - ${item.title}`);
