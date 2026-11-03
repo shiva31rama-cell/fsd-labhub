@@ -1,7 +1,7 @@
 {
   "name": "create-fsd-lab",
-  "version": "0.1.0",
-  "description": "Interactive installer for 18 free Full Stack Development laboratory experiments",
+  "version": "0.2.0",
+  "description": "Lightweight cross-platform installer for 18 free Full Stack Development laboratory experiments",
   "type": "module",
   "bin": {
     "create-fsd-lab": "bin/create-fsd-lab.js"
@@ -26,7 +26,8 @@
     "react",
     "mongodb",
     "education",
-    "scaffolder"
+    "scaffolder",
+    "cli"
   ],
   "license": "MIT",
   "repository": {
